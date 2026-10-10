@@ -1,0 +1,112 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cimalgo"
+# 版本号单一来源: src/cimalgo/__init__.py 的 __version__
+dynamic = ["version"]
+description = "BW01 / BW01D CIM 芯片自动化测试框架"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+# TODO: 是否引入 锁文件 限制直接、间接依赖的具体版本, 例如使用: uv lock 生成 uv.lock
+dependencies = [
+    "numpy>=2.0",
+    "pyyaml>=6.0",
+    "packaging>=24.0",
+    "paramiko>=3.4",
+    "matplotlib>=3.9",
+    "scikit-learn>=1.5",
+    "tqdm>=4.66",
+    # SDK wheel 的运行时依赖; SDK 自身通过 --download 同步安装
+    "protobuf>=5.0",
+    "grpcio>=1.60",
+    "pyserial>=3.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-xdist>=3.5",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    # mypy 静态类型检查用的类型声明包
+    "types-paramiko",
+    "types-PyYAML",
+    "types-tqdm",
+]
+
+[project.scripts]
+cim-deploy-sdk = "cimalgo.remote.sdk_deploy:main"
+cim-device-lock = "cimalgo.remote.device_lock:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = { attr = "cimalgo.__version__" }
+
+# 打包 Python 包时，除了 .py 文件，还要带上的文件
+[tool.setuptools.package-data]
+cimalgo = ["py.typed"]
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# --tb=short 异常简洁输出
+addopts = "-ra --tb=short --strict-markers"
+# 默认只跑不依赖设备的测试
+# 要跑硬件测试: pytest -m hardware
+markers = [
+    "hardware: 需要真实设备, 默认不运行; 用 -m hardware 显式选择",
+]
+# 把警告当错误处理, 格式为, 处理方式:报错消息:警告类型:模块匹配:行号
+filterwarnings = ["error::DeprecationWarning:cimalgo"]
+# 设置 pytest-asyncio 的异步 fixture 与事件循环生命周期
+asyncio_default_fixture_loop_scope = "function"
+
+# ---------------------------------------------------------------------------
+# ruff: 代码风格检查
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = ["third_party", ".history"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RET", "PTH", "RUF"]
+ignore = [
+    "E501",   # 行长交给 formatter
+    "RUF001", "RUF002", "RUF003",  # 中文标点
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**" = ["B011"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cimalgo"]
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# mypy: python 静态类型检查
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+packages = ["cimalgo"]
+mypy_path = "src"
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+# 忽略以下外部模块缺失或缺少类型声明时的 mypy 导入错误
+[[tool.mypy.overrides]]
+module = ["wtm.*", "infer_service_pb2", "sklearn.*", "matplotlib.*"]
+ignore_missing_imports = true
