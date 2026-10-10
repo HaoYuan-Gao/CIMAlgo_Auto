@@ -1,0 +1,57 @@
+# 默认启用的 SDK 配置标识，对应 sdks 下的键
+active_sdk: bw01d_v2.3.3
+
+# SDK 和工具链共用此凭据文件，路径相对于项目根目录
+netrc: .netrc
+
+# auth 是本项目定义的配置字段，用于在各 SDK/工具链中选择认证方式，省略时默认为 basic
+# Basic 和 Bearer 本身是标准 HTTP 认证方式：
+# basic -> Authorization: Basic <Base64(login:password)>（RFC 7617），使用 netrc 的用户名和密码
+# bearer -> Authorization: Bearer <token>（RFC 6750），使用 netrc 的 password 字段保存的令牌
+
+# 下载和安装的根目录，路径相对于项目根目录
+download_dir: third_party/downloads
+sdk_install_root: third_party/SDK
+toolchain_install_root: third_party/toolchain
+
+# SDK、map tools 和 compiler tools 分别配置 extract；解压统一使用 Python 安全过滤
+# wrapper_dir: 需要去掉的包内最外层目录名；省略时保留原目录结构
+# exclude_dirs: 相对于包内容根目录的具体目录路径, 不支持通配符
+
+# 工具链独立定义，可被多个 SDK 使用
+toolchains:
+  v1.6.17.2:
+    version: "1.6.17.2"
+    map_tools:
+      prefix: "bw01d_cim_map_tools_ubuntu2404"
+      suffix: "" # 例如 "_tmp"
+      extract:
+        exclude_dirs: []
+    compiler_tools:
+      prefix: "bw01d_cim_compiler_tools_ubuntu2404"
+      suffix: "" # 例如 "_tmp"
+      extract:
+        exclude_dirs: []
+    # API 项目地址: 项目路径直接用 / 分隔, 由 cim_config.py 统一编码并拼接下载链接
+    url: "https://git.witmem.ad/api/v4/projects/project/bw01/bw01/bw01d/bw01d_cim_toolchain"
+    auth: bearer
+
+sdks:
+  bw01d_v2.3.3:
+    chip: "bw01d"
+    version: "2.3.3"
+    sdk_prefix: "BW01D_SDK"
+    url: "https://nexus.witmem.ad/repository/bw01d-beta"
+    auth: basic
+    toolchain: "v1.6.17.2"
+
+  bw01d_v2.3.4:
+    chip: "bw01d"
+    version: "2.3.4"
+    sdk_prefix: "BW01D_SDK"
+    url: "https://nexus.witmem.ad/repository/bw01d-beta"
+    auth: basic
+    toolchain: "v1.6.17.2"
+    extract:
+      exclude_dirs:
+        - Host/src/host_sw/venv_gui
