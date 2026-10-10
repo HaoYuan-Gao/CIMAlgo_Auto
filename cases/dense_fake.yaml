@@ -1,0 +1,30 @@
+# 示例 case: 假数据稠密层, 跑完整管线
+case: dense_128x256_fake
+tags: [smoke]
+
+device:
+  name: evb-01
+  firmware_version: "2.3.3"
+  power_cycle: true
+  hard_blocks: [0, 1, 2, 3]
+  select_layers: [0]
+  tsv_sel0: 0
+  tsv_sel1: 255
+
+model:
+  kind: fake
+  seed: 7
+  layers:
+    - name: model.layers.0.dense_L2_0_L0_0_node_0
+      batch: 32
+      in_features: 128
+      out_features: 256
+
+infer:
+  dummy: 2
+  mode:
+    repeat: 1
+
+thresholds:
+  cs_overall: ">= 0.995"
+  error_std_max: "<= 2.0"

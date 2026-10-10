@@ -1,0 +1,11 @@
+.netrc
+.vscode/
+.history/
+__pycache__/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+third_party/
+workspace/
+junit.xml
