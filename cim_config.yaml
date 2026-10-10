@@ -1,0 +1,57 @@
+# 默认 SDK, 对应 sdks 下的键; 可用 --sdk 或环境变量 CIM_SDK 覆盖
+active_sdk: bw01d_v2.3.3
+
+# 相对路径以本文件所在目录为根
+netrc: .netrc
+download_dir: third_party/downloads
+sdk_install_root: third_party/SDK
+toolchain_install_root: third_party/toolchain
+
+# 首次连接时允许自动记录 SSH 主机公钥的 IP 白名单 (单个 IP 或 CIDR)
+trusted_ips:
+  - "10.27.17.0/24"
+
+# 测试设备; case 文件通过名字引用。密码不写在这里, 用 --device-password 或环境变量 CIM_DEVICE_PASSWORD 传入
+# gRPC 端口选择板上哪颗芯片 (site), 属于用例参数, 在 case 的 device.grpc_port 或 @pytest.mark.device(grpc_port=...) 里给
+# evb_port / bmc_ip 是不同芯片的电源控制入口, 一台设备只能配置其中一个
+devices:
+  evb-01:
+    ip: 10.27.17.45
+    ssh_port: 22
+    ssh_username: root
+    evb_port: 61006
+    server_port: 60001
+    is_cluster: false
+    test_stage: CP3
+
+toolchains:
+  v1.6.17.2:
+    version: "1.6.17.2"
+    url: "https://git.witmem.ad/api/v4/projects/project/bw01/bw01/bw01d/bw01d_cim_toolchain"
+    auth: bearer
+    map_tools:
+      prefix: bw01d_cim_map_tools_ubuntu2404
+      suffix: ""
+    compiler_tools:
+      prefix: bw01d_cim_compiler_tools_ubuntu2404
+      suffix: ""
+
+sdks:
+  bw01d_v2.3.3:
+    chip: bw01d
+    version: "2.3.3"
+    sdk_prefix: BW01D_SDK
+    url: "https://nexus.witmem.ad/repository/bw01d-beta"
+    auth: basic
+    toolchain: v1.6.17.2
+
+  bw01d_v2.3.4:
+    chip: bw01d
+    version: "2.3.4"
+    sdk_prefix: BW01D_SDK
+    url: "https://nexus.witmem.ad/repository/bw01d-beta"
+    auth: basic
+    toolchain: v1.6.17.2
+    extract:
+      exclude_dirs:
+        - Host/src/host_sw/venv_gui
