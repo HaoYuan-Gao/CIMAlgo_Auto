@@ -1,0 +1,53 @@
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+# 只检查这些目录/文件, 其余 (third_party、.history 等) 都不检查
+include = [
+    "*.py",
+    "analyzer/**/*.py",
+    "device_ctrl/**/*.py",
+    "logger/**/*.py",
+    "tests/**/*.py",
+    "utils/**/*.py",
+]
+
+
+[tool.ruff.lint]
+# Enabled rule sets
+select = [
+    "E",      # pycodestyle
+    "F",      # Pyflakes
+    "I",      # isort
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "SIM",    # flake8-simplify
+    "RET",    # flake8-return
+]
+
+# 行长度交给 formatter 处理
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# __init__.py 里的导入是为了重新导出, 不算未使用
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+# 本项目的顶层包/模块, 排在第三方库之后单独分组
+known-first-party = [
+    "analyzer",
+    "cim_config",
+    "cim_config_validators",
+    "cim_constants",
+    "device_ctrl",
+    "logger",
+    "utils",
+]
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+skip-magic-trailing-comma = false
+docstring-code-format = true

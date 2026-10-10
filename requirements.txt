@@ -1,0 +1,17 @@
+# pytest 本身; pytest-xdist 支持 -n auto 并行执行 (conftest.py 按 workerinput 识别 worker)
+pytest==9.1.1
+pytest-asyncio==1.4.0
+pytest-xdist==3.8.0
+
+# analyzer (numpy/pyyaml/matplotlib/scikit-learn)、utils.ssh_connection (asyncssh) 直接用到；
+# protobuf/pyserial/grpcio/grpcio-tools 是 SDK wheel 的运行时依赖——
+numpy==2.3.4
+pyyaml==6.0.3
+requests==2.32.5
+matplotlib==3.10.7
+scikit-learn==1.9.1
+protobuf==6.33.6
+pyserial==3.5
+grpcio==1.80.0
+grpcio-tools==1.80.0
+asyncssh>=2.14.2,<3

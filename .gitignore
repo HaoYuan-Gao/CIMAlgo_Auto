@@ -1,0 +1,7 @@
+.netrc
+.vscode/
+.history/
+__pycache__/
+third_party/downloads/
+third_party/SDK/
+third_party/toolchain/
